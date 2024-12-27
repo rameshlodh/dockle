@@ -30,7 +30,7 @@ jobs:
         with:
           image: 'rameshlodh/frontend:a983e03e387f6e603f15016179b562ecd338bb31'  # Replace with your image name
           format: 'json'  # Store the output in JSON format for better readability and parsing
-          output: 'dockle'
+          output: 'dockle.json'
           exit-code: '1'  # Exit code to return if vulnerabilities are found (non-zero will fail the job)
           exit-level: 'warn'  # Fail the job if vulnerabilities of 'warn' level or higher are found
           # ignore: 'CIS-DI-0001,DKL-DI-0006'  # Ignore specific rule IDs
