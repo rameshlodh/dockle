@@ -34,13 +34,19 @@ jobs:
           ignore: 'CIS-DI-0001,DKL-DI-0006'  # Ignore specific rule IDs
         continue-on-error: true  # Allows the job to continue even if Dockle finds vulnerabilities
 
-      # Step 4: Save Dockle output as an artifact (output to dockle.json)
+      # Step 4: Display the contents of the Dockle scan output
+      - name: Display Dockle Output
+        run: |
+          echo "Dockle Output:"
+          echo "${{ steps.dockle.outputs.dockle-json }}"  # Display the content to verify it's being captured
+
+      # Step 5: Save Dockle output as an artifact
       - name: Save Dockle Scan Results as Artifact
         run: |
           echo "${{ steps.dockle.outputs.dockle-json }}" > dockle.json  # Store Dockle output in a file
         continue-on-error: true  # Prevents the job from failing if no output is available
-      
-      # Step 5: Upload the artifact
+
+      # Step 6: Upload the artifact
       - name: Upload Dockle Scan Results as Artifact
         uses: actions/upload-artifact@v3
         with:
