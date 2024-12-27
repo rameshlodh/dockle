@@ -1,6 +1,7 @@
 name: Docker Image Security Scan with Dockle
 
 on:
+  workflow_call:
   push:
     branches:
       - main  # Or any other branch you'd like to scan
@@ -37,7 +38,7 @@ jobs:
 
       # Step 6: Upload the artifact
       - name: Upload Dockle Scan Results as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()  # Always run this step regardless of the job's outcome
         with:
           name: dockle-scan-results  # Artifact name
