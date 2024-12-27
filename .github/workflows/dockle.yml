@@ -1,0 +1,45 @@
+name: Docker Image Security Scan with Dockle
+
+on:
+  push:
+    branches:
+      - main 
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  scan:
+    name: Run Dockle Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Step 2: Install Docker
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      # Step 3: Install Dockle
+      - name: Install Dockle
+        run: |
+          curl -LO https://github.com/goodwithtech/dockle/releases/download/v0.5.10/dockle-linux-amd64-v0.5.10.tar.gz
+          tar -xvzf dockle-linux-amd64-v0.5.10.tar.gz
+          sudo mv dockle /usr/local/bin/
+      
+      # Step 4: Pull the existing Docker image (replace with your image name)
+      - name: Pull Docker Image
+        run: |
+          docker pull docker pull rameshlodh/frontend:a983e03e387f6e603f15016179b562ecd338bb31
+
+      # Step 5: Run Dockle security scan on the pulled Docker image
+      - name: Run Dockle security scan
+        run: |
+          dockle docker pull rameshlodh/frontend:a983e03e387f6e603f15016179b562ecd338bb31
+
+      # Optional: Fail the build if vulnerabilities are found
+      - name: Fail if vulnerabilities are found
+        run: |
+          dockle docker pull rameshlodh/frontend:a983e03e387f6e603f15016179b562ecd338bb31 || exit 1
