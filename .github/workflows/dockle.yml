@@ -29,26 +29,16 @@ jobs:
         with:
           image: 'rameshlodh/frontend:a983e03e387f6e603f15016179b562ecd338bb31'  # Replace with your image name
           format: 'json'  # Store the output in JSON format for better readability and parsing
+          output: 'dockle-json'
           exit-code: '1'  # Exit code to return if vulnerabilities are found (non-zero will fail the job)
           exit-level: 'warn'  # Fail the job if vulnerabilities of 'warn' level or higher are found
           # ignore: 'CIS-DI-0001,DKL-DI-0006'  # Ignore specific rule IDs
         continue-on-error: true  # Allows the job to continue even if Dockle finds vulnerabilities
 
-      # Step 4: Display the contents of the Dockle scan output
-      - name: Display Dockle Output
-        run: |
-          echo "Dockle Output:"
-          echo "${{ steps.dockle.outputs.dockle-json }}"  # Display the content to verify it's being captured
-
-      # Step 5: Save Dockle output as an artifact
-      - name: Save Dockle Scan Results as Artifact
-        run: |
-          echo "${{ steps.dockle.outputs.dockle-json }}" > dockle.json  # Store Dockle output in a file
-        continue-on-error: true  # Prevents the job from failing if no output is available
-
       # Step 6: Upload the artifact
       - name: Upload Dockle Scan Results as Artifact
         uses: actions/upload-artifact@v3
+        if: always()  # Always run this step regardless of the job's outcome
         with:
           name: dockle-scan-results  # Artifact name
           path: dockle.json  # Path to the Dockle scan results file
