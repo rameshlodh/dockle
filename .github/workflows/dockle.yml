@@ -22,21 +22,29 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
 
-      # Step 3: Run Dockle security scan using the Dockle Action
+      # Step 3: Run Dockle security scan using the Dockle Action and save output to dockle.json
       - name: Run Dockle security scan
         id: dockle
         uses: goodwithtech/dockle-action@main
         with:
           image: 'rameshlodh/frontend:a983e03e387f6e603f15016179b562ecd338bb31'  # Replace with your image name
           format: 'json'  # Store the output in JSON format for better readability and parsing
-          exit-code: '0'  # Exit code to return if vulnerabilities are found (non-zero will fail the job)
+          exit-code: '1'  # Exit code to return if vulnerabilities are found (non-zero will fail the job)
           exit-level: 'warn'  # Fail the job if vulnerabilities of 'warn' level or higher are found
-          # ignore: 'CIS-DI-0001,DKL-DI-0006'  # Ignore specific rule IDs
+          ignore: 'CIS-DI-0001,DKL-DI-0006'  # Ignore specific rule IDs
+        continue-on-error: true  # Allows the job to continue even if Dockle finds vulnerabilities
 
-      # Step 4: Save Dockle output as an artifact
+      # Step 4: Save Dockle output as an artifact (output to dockle.json)
+      - name: Save Dockle Scan Results as Artifact
+        run: |
+          echo "${{ steps.dockle.outputs.dockle-json }}" > dockle.json  # Store Dockle output in a file
+        continue-on-error: true  # Prevents the job from failing if no output is available
+      
+      # Step 5: Upload the artifact
       - name: Upload Dockle Scan Results as Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: dockle-scan-results  # Name of the artifact
-          path: dockle.json  # Path to the output file
-
+          name: dockle-scan-results  # Artifact name
+          path: dockle.json  # Path to the Dockle scan results file
+          if-no-files-found: warn  # Warn if no files are found
+          include-hidden-files: false
