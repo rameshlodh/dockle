@@ -31,7 +31,7 @@ jobs:
           format: 'json'  # Store the output in JSON format for better readability and parsing
           exit-code: '1'  # Exit code to return if vulnerabilities are found (non-zero will fail the job)
           exit-level: 'warn'  # Fail the job if vulnerabilities of 'warn' level or higher are found
-          ignore: 'CIS-DI-0001,DKL-DI-0006'  # Ignore specific rule IDs
+          # ignore: 'CIS-DI-0001,DKL-DI-0006'  # Ignore specific rule IDs
         continue-on-error: true  # Allows the job to continue even if Dockle finds vulnerabilities
 
       # Step 4: Display the contents of the Dockle scan output
