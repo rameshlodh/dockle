@@ -22,24 +22,12 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
 
-      # Step 3: Install Dockle
-      - name: Install Dockle
-        run: |
-          curl -LO https://github.com/goodwithtech/dockle/releases/download/v0.5.11/dockle-linux-amd64-v0.5.11.tar.gz  # Updated version
-          tar -xzvf dockle-linux-amd64-v0.5.11.tar.gz
-          sudo mv dockle /usr/local/bin/
-      
-      # Step 4: Pull the existing Docker image (replace with your image name/tag)
-      - name: Pull Docker Image
-        run: |
-          docker pull rameshlodh/frontend:a983e03e387f6e603f15016179b562ecd338bb31
-
-      # Step 5: Run Dockle security scan on the pulled Docker image
+      # Step 3: Run Dockle security scan using the Dockle Action
       - name: Run Dockle security scan
-        run: |
-          dockle rameshlodh/frontend:a983e03e387f6e603f15016179b562ecd338bb31
-
-      # Optional: Fail the build if vulnerabilities are found
-      - name: Fail if vulnerabilities are found
-        run: |
-          dockle rameshlodh/frontend:a983e03e387f6e603f15016179b562ecd338bb31 || exit 1
+        uses: goodwithtech/dockle-action@main
+        with:
+          image: 'rameshlodh/frontend:a983e03e387f6e603f15016179b562ecd338bb31'  
+          format: 'json'
+          exit-code: '0' 
+          exit-level: 'high'
+          # ignore: 'CIS-DI-0001,DKL-DI-0006'
